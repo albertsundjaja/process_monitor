@@ -9,7 +9,6 @@ public:
 
     // TODO: Declare any necessary private members
 private:
-    long _prevUpTime;
     long _prevActiveJiffies;
     long _prevIdleJiffies;
 };

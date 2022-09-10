@@ -93,7 +93,7 @@ long LinuxParser::ActiveJiffies(int pid[[maybe_unused]]) { return 0; }
 long LinuxParser::ActiveJiffies() { 
   vector<int> cpuStat = CpuUtilization();
   // user + nice + system + irq + softirq + steal
-  return cpuStat[0] + cpuStat[1] + cpuStat[5] + cpuStat[6] + cpuStat[7]; 
+  return cpuStat[0] + cpuStat[1] + cpuStat[2] + cpuStat[5] + cpuStat[6] + cpuStat[7]; 
 }
 
 // TODO: Read and return the number of idle jiffies for the system

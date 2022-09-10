@@ -3,19 +3,22 @@
 #include <iostream>
 
 Processor::Processor() {
-    _prevUpTime = LinuxParser::UpTime();
     _prevActiveJiffies = LinuxParser::ActiveJiffies();
     _prevIdleJiffies = LinuxParser::IdleJiffies();
 }
 
-// TODO: Return the aggregate CPU utilization
+// ref: https://stackoverflow.com/a/23376195/7059839
 float Processor::Utilization() { 
-    long currActive[[maybe_unused]] = LinuxParser::ActiveJiffies();
-    long currIdle[[maybe_unused]] = LinuxParser::IdleJiffies();
-    long deltaTotal[[maybe_unused]] = (currActive + currIdle) - (_prevActiveJiffies + _prevIdleJiffies);
-    long deltaIdle[[maybe_unused]] = currIdle - _prevIdleJiffies;
-    std::cout << "test";
-    if (deltaTotal == 0) 
-        return 0;
-    return (deltaTotal - deltaIdle) / deltaTotal;
+    long currActive = LinuxParser::ActiveJiffies();
+    long currIdle = LinuxParser::IdleJiffies();
+    long deltaTotal = (currActive + currIdle) - (_prevActiveJiffies + _prevIdleJiffies);
+    long deltaIdle = currIdle - _prevIdleJiffies;
+    float cpuUtil = 0.0;
+    // prevent division by 0
+    if (deltaTotal != 0) 
+        cpuUtil = (float(deltaTotal) - float(deltaIdle))/float(deltaTotal);
+    
+    _prevActiveJiffies = currActive;
+    _prevIdleJiffies = currIdle;
+    return cpuUtil;
 }
