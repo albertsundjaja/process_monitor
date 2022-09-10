@@ -1,7 +1,9 @@
 #include "ncurses_display.h"
 #include "system.h"
+#include "processor.h"
 
 int main() {
-  System system;
+  Processor processor;
+  System system(&processor);
   NCursesDisplay::Display(system);
 }
