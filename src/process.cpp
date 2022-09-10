@@ -13,24 +13,25 @@ using std::vector;
 
 int Process::Pid() { return _pid; }
 
-float Process::CpuUtilization() { 
+float Process::CpuUtilization() const { 
     // ref: https://stackoverflow.com/a/16736599/7059839
     float totalCpuTime = float(LinuxParser::ActiveJiffies(_pid)) / sysconf(_SC_CLK_TCK);
-    return 100 * totalCpuTime / LinuxParser::UpTime(_pid);
+    // percentage 100* will be done when displaying, here we only return the fraction
+    return totalCpuTime / LinuxParser::UpTime(_pid);
 }
 
-// TODO: Return the command that generated this process
-string Process::Command() { return string(); }
+string Process::Command() { return LinuxParser::Command(_pid); }
 
-// TODO: Return this process's memory utilization
-string Process::Ram() { return string(); }
+// in mb
+string Process::Ram() { 
+    int kbRam = std::stoi(LinuxParser::Ram(_pid));
+    return std::to_string(kbRam / 1024); 
+}
 
-// TODO: Return the user (name) that generated this process
-string Process::User() { return string(); }
+string Process::User() { return LinuxParser::User(_pid); }
 
-// TODO: Return the age of this process (in seconds)
-long int Process::UpTime() { return 0; }
+long int Process::UpTime() { return LinuxParser::UpTime(_pid); }
 
-// TODO: Overload the "less than" comparison operator for Process objects
-// REMOVE: [[maybe_unused]] once you define the function
-bool Process::operator<(Process const& a[[maybe_unused]]) const { return true; }
+bool Process::operator<(Process const& a[[maybe_unused]]) const { 
+    return this->CpuUtilization() < a.CpuUtilization();
+}
